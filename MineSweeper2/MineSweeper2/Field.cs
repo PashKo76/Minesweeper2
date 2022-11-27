@@ -28,6 +28,15 @@ namespace MineSweeper2
                 }
             }
         }
+        public bool IsCellMine(int x, int y)
+        {
+            if (x >= Width || x < 0 || y >= Height || y < 0)
+            {
+                return false;
+            }
+            return cells[x, y].IsMine;
+        }
+
         public void Render()
         {
             for (int y = 0; y < Height; y++)
