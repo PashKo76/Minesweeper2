@@ -12,6 +12,7 @@ namespace MineSweeper2
         int X;
         int Y;
         Field field;
+        Cell cell;
         public bool IsMine { get; }
         public bool IsOpen { get; set; }
         public bool HaveMineNeigh { get; set; }
@@ -25,14 +26,18 @@ namespace MineSweeper2
         int NeighborMineCount()
         {
             int MineNAmmount = 0;
-            for(int t = 0; t < 8; t++)
+            for(int dx = -1; dx <= 1; dx++)
             {
-                float A = (float)t * MathF.PI / 4;
-                int X = (int)MathF.Round(MathF.Cos(A))+this.X;
-                int Y = (int)MathF.Round(MathF.Sin(A))+this.Y;
-                if(field.IsCellMine(X, Y))
+                for(int dy = -1; dy <= 1; dy++)
                 {
-                    MineNAmmount++;
+                    if (field.DoesCordExist(X + dx, Y + dy))
+                    {
+                        cell = field.GetCellInf(X + dx, Y + dy);
+                        if (cell.IsMine)
+                        {
+                            MineNAmmount++;
+                        }
+                    }
                 }
             }
             if (MineNAmmount != 0)
@@ -43,29 +48,21 @@ namespace MineSweeper2
         }
         public void Render()
         {
-            //if (IsOpen)
-            //{
-                if (IsMine)
+            if (IsMine)
+            {
+                Console.Write('#');
+            }
+            else
+            {
+                if (NeighborMineCount() == 0)
                 {
-                    Console.Write('#');
+                    Console.Write(' ');
                 }
                 else
                 {
-                    if (NeighborMineCount() == 0)
-                    {
-                        Console.Write(' ');
-                    }
-                    else
-                    {
-                        Console.Write(NeighborMineCount());
-                    }
+                    Console.Write(NeighborMineCount());
                 }
-            //}
-            //else
-            //{
-            //    Console.Write('\u2588');
-            //}
-            //Console.Write(IsMine? '\u2588' : $"{NeighborMineCount()}");
+            }
         }
     }
 }
