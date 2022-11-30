@@ -12,7 +12,10 @@ namespace MineSweeper2
         int X;
         int Y;
         Field field;
-        bool IsMine = false;
+        Cell cell;
+        public bool IsMine { get; }
+        public bool IsOpen { get; set; }
+        public bool HaveMineNeigh { get; set; }
         public Cell(in Field field, int x, int y)
         {
             this.field = field;
@@ -20,14 +23,49 @@ namespace MineSweeper2
             Y = y;
             IsMine = random.Next(1, 10) == 1;
         }
-        public int NeighborMineCount()
+        int NeighborMineCount()
         {
-
-            return 2;
+            int MineNAmmount = 0;
+            for(int dx = -1; dx <= 1; dx++)
+            {
+                for(int dy = -1; dy <= 1; dy++)
+                {
+                    if(dx != 0 || dy != 0)
+                    {
+                        if (field.DoesCordExist(X + dx, Y + dy))
+                        {
+                            cell = field.GetCellInf(X + dx, Y + dy);
+                            if (cell.IsMine)
+                            {
+                                MineNAmmount++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (MineNAmmount != 0)
+            {
+                HaveMineNeigh = true;
+            }
+            return MineNAmmount;
         }
         public void Render()
         {
-            Console.Write(IsMine? '1' : ' ');
+            if (IsMine)
+            {
+                Console.Write('#');
+            }
+            else
+            {
+                if (NeighborMineCount() == 0)
+                {
+                    Console.Write(' ');
+                }
+                else
+                {
+                    Console.Write(NeighborMineCount());
+                }
+            }
         }
     }
 }
