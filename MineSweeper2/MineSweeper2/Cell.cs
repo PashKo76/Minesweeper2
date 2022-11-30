@@ -30,12 +30,15 @@ namespace MineSweeper2
             {
                 for(int dy = -1; dy <= 1; dy++)
                 {
-                    if (field.DoesCordExist(X + dx, Y + dy))
+                    if(dx != 0 || dy != 0)
                     {
-                        cell = field.GetCellInf(X + dx, Y + dy);
-                        if (cell.IsMine)
+                        if (field.DoesCordExist(X + dx, Y + dy))
                         {
-                            MineNAmmount++;
+                            cell = field.GetCellInf(X + dx, Y + dy);
+                            if (cell.IsMine)
+                            {
+                                MineNAmmount++;
+                            }
                         }
                     }
                 }
