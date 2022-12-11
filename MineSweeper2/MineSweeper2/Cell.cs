@@ -49,22 +49,53 @@ namespace MineSweeper2
             }
             return MineNAmmount;
         }
+        public void AmIVisible()
+        {
+            if (!IsOpen)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        if (dx != 0 || dy != 0)
+                        {
+                            if (field.DoesCordExist(X + dx, Y + dy))
+                            {
+                                cell = field.GetCellInf(X + dx, Y + dy);
+                                if (cell.IsOpen)
+                                {
+                                    IsOpen = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public void Render()
         {
-            if (IsMine)
+            if (IsOpen)
             {
-                Console.Write('#');
-            }
-            else
-            {
-                if (NeighborMineCount() == 0)
+                if (IsMine)
                 {
-                    Console.Write(' ');
+                    Console.Write('#');
+                    field.Lose = true;
                 }
                 else
                 {
-                    Console.Write(NeighborMineCount());
+                    if (NeighborMineCount() == 0)
+                    {
+                        Console.Write(' ');
+                    }
+                    else
+                    {
+                        Console.Write(NeighborMineCount());
+                    }
                 }
+            }
+            else
+            {
+                Console.Write('\u2588');
             }
         }
     }

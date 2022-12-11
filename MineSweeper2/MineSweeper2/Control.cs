@@ -8,5 +8,6 @@ namespace MineSweeper2
 {
     internal class Control
     {
+        
     }
 }

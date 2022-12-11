@@ -4,8 +4,11 @@
     {
         static void Main(string[] args)
         {
-            Field field = new Field(10,10);
+            Field field = new Field(90,21);
+            field.RenderInterface();
             field.Render();
+            
+
         }
     }
 }
