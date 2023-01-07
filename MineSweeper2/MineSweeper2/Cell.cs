@@ -12,16 +12,77 @@ namespace MineSweeper2
         int X;
         int Y;
         Field field;
-        Cell cell;
-        public bool IsMine { get; }
+        Cell? cell;
+        public bool IsMine { get; private set; }
         public bool IsOpen { get; set; }
-        public bool HaveMineNeigh { get; set; }
+        public bool HaveMineNeigh { get; private set; }
         public Cell(in Field field, int x, int y)
         {
+            IsOpen = false;
             this.field = field;
             X = x;
             Y = y;
             IsMine = random.Next(1, 10) == 1;
+        }
+        public void OpenCell()
+        {
+            if (IsMine)
+            {
+                //сделаю проиграш
+            }
+            RecursedF();
+        }
+        public void RecursedF()
+        {
+            if (!IsOpen)
+            {
+                IsOpen = true;
+                Render();
+                HaveItMineN();
+                //if (!HaveMineNeigh)
+                //{
+                    for(int dx = -1; dx <= 1; dx++)
+                    {
+                        for(int dy = -1; dy <= 1; dy++)
+                        {
+                            cell = ReturnCell(X + dx, Y + dy);
+                        if (!(HaveMineNeigh && cell.HaveMineNeigh))
+                        {
+                            try
+                            {
+                                cell.RecursedF();
+                            }
+                            catch { }
+                        }
+                        }
+                    }
+                //}
+            }
+        }
+        public void HaveItMineN()
+        {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx != 0 || dy != 0)
+                    {
+                        cell = ReturnCell(X + dx, Y + dy);
+                        if (cell!=null && cell.IsMine)
+                        {
+                            HaveMineNeigh = true;
+                        }
+                    }
+                }
+            }
+        }
+        Cell? ReturnCell(int x, int y)
+        {
+            if (field.DoesCordExist(x, y))
+            {
+                return field.GetCellInf(x, y);
+            }
+            return null;
         }
         int NeighborMineCount()
         {
@@ -32,39 +93,45 @@ namespace MineSweeper2
                 {
                     if(dx != 0 || dy != 0)
                     {
-                        if (field.DoesCordExist(X + dx, Y + dy))
+                        ReturnCell(X + dx, Y + dy);
+                        if (cell != null && cell.IsMine)
                         {
-                            cell = field.GetCellInf(X + dx, Y + dy);
-                            if (cell.IsMine)
-                            {
-                                MineNAmmount++;
-                            }
+                            MineNAmmount++;
                         }
                     }
                 }
             }
-            if (MineNAmmount != 0)
-            {
-                HaveMineNeigh = true;
-            }
+            //if (MineNAmmount != 0)
+            //{
+            //    HaveMineNeigh = true;
+            //}
             return MineNAmmount;
         }
         public void Render()
         {
-            if (IsMine)
+            Console.SetCursorPosition(X, Y);
+            if (IsOpen)
             {
-                Console.Write('#');
-            }
-            else
-            {
-                if (NeighborMineCount() == 0)
+                if (IsMine)
                 {
-                    Console.Write(' ');
+                    Console.Write('#');
                 }
                 else
                 {
-                    Console.Write(NeighborMineCount());
+                int N = NeighborMineCount();
+                    if (N == 0)
+                    {
+                        Console.Write(' ');
+                    }
+                    else
+                    {
+                        Console.Write(N);
+                    }
                 }
+            }
+            else
+            {
+                Console.Write('\u2588');
             }
         }
     }

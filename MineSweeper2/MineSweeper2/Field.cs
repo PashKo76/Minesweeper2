@@ -18,6 +18,10 @@ namespace MineSweeper2
             cells = new Cell[Width, Height];
             Build();
         }
+        public void OpenCell(int X, int Y)
+        {
+            cells[X, Y].OpenCell();
+        }
         void Build()
         {
             for (int x = 0; x < Width; x++)
@@ -27,10 +31,21 @@ namespace MineSweeper2
                     cells[x, y] = new Cell(this, x, y);
                 }
             }
+            //for (int x = 0; x < Width; x++)
+            //{
+            //    for (int y = 0; y < Height; y++)
+            //    {
+            //        cells[x, y].HaveItMineN();
+            //    }
+            //}
         }
-        public Cell GetCellInf(int x, int y)
+        public Cell? GetCellInf(int x, int y)
         {
-            return cells[x, y];
+            if (DoesCordExist(x, y))
+            {
+                return cells[x, y];
+            }
+            return null;
         }
         public void Render()
         {
@@ -40,20 +55,13 @@ namespace MineSweeper2
                 {
                     cells[x, y].Render();
                 }
-                Console.WriteLine();
+                //Console.WriteLine();
             }
         }
         public bool DoesCordExist(int x, int y)
         {
-            bool bX;
-            bool bY;
-            if (x >= Width) bX = false;
-            else if (x < 0) bX = false;
-            else bX = true;
-            if (y >= Height) bY = false;
-            else if (y < 0) bY = false;
-            else bY = true;
-            return bX && bY;
+            if (x >= Width || x < 0 || y >= Height || y < 0) return false;
+            return true;
         }
     }
 }
