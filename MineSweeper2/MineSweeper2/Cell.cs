@@ -46,14 +46,14 @@ namespace MineSweeper2
                         for(int dy = -1; dy <= 1; dy++)
                         {
                             cell = ReturnCell(X + dx, Y + dy);
-                        if (!(HaveMineNeigh && cell.HaveMineNeigh))
-                        {
-                            try
+                            if (!(HaveMineNeigh && cell.HaveMineNeigh))
                             {
-                                cell.RecursedF();
+                                try
+                                {
+                                    cell.RecursedF();
+                                }
+                                catch { }
                             }
-                            catch { }
-                        }
                         }
                     }
                 //}
