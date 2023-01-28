@@ -18,10 +18,6 @@ namespace MineSweeper2
             cells = new Cell[Width, Height];
             Build();
         }
-        public void OpenCell(int X, int Y)
-        {
-            cells[X, Y].OpenCell();
-        }
         void Build()
         {
             for (int x = 0; x < Width; x++)
@@ -31,13 +27,6 @@ namespace MineSweeper2
                     cells[x, y] = new Cell(this, x, y);
                 }
             }
-            //for (int x = 0; x < Width; x++)
-            //{
-            //    for (int y = 0; y < Height; y++)
-            //    {
-            //        cells[x, y].HaveItMineN();
-            //    }
-            //}
         }
         public Cell? GetCellInf(int x, int y)
         {
@@ -47,21 +36,39 @@ namespace MineSweeper2
             }
             return null;
         }
-        public void Render()
-        {
-            for (int y = 0; y < Height; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    cells[x, y].Render();
-                }
-                //Console.WriteLine();
-            }
-        }
         public bool DoesCordExist(int x, int y)
         {
             if (x >= Width || x < 0 || y >= Height || y < 0) return false;
             return true;
+        }
+        internal void OpenCell(int X, int Y)
+        {
+            if(!DoesCordExist(X, Y))
+            {
+                throw new Exception("Нормальные кординаты где?");
+            }
+            cells[X, Y].Recursed();
+        }
+        internal void Debug()
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    cells[x, y].IsOpen = true;
+                }
+            }
+            Render();
+        }
+        internal void Render()
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    cells[x, y].Render();
+                }
+            }
         }
     }
 }

@@ -15,7 +15,6 @@ namespace MineSweeper2
         Cell? cell;
         public bool IsMine { get; private set; }
         public bool IsOpen { get; set; }
-        public bool HaveMineNeigh { get; private set; }
         public Cell(in Field field, int x, int y)
         {
             IsOpen = false;
@@ -24,42 +23,48 @@ namespace MineSweeper2
             Y = y;
             IsMine = random.Next(1, 10) == 1;
         }
-        public void OpenCell()
+        internal void Recursed()
         {
-            if (IsMine)
+            if (IsOpen)
             {
-                //сделаю проиграш
+                return;
             }
-            RecursedF();
-        }
-        public void RecursedF()
-        {
-            if (!IsOpen)
+            IsOpen = true;
+            Render(); // почему? Сделаю рендер "Динамическим", один раз отрисуб поле в начале, а потом буду перекрашивать клетки
+            if (GetMineN())
             {
-                IsOpen = true;
-                Render();
-                HaveItMineN();
-                //if (!HaveMineNeigh)
-                //{
-                    for(int dx = -1; dx <= 1; dx++)
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    for (int dy = -1; dy <= 1; dy++)
                     {
-                        for(int dy = -1; dy <= 1; dy++)
+                        if (dx != 0 || dy != 0)
                         {
                             cell = ReturnCell(X + dx, Y + dy);
-                            if (!(HaveMineNeigh && cell.HaveMineNeigh))
+                            if (cell != null && !cell.IsMine && !cell.GetMineN())
                             {
-                                try
-                                {
-                                    cell.RecursedF();
-                                }
-                                catch { }
+                                cell.Recursed();
                             }
                         }
                     }
-                //}
+                }
+                return;
+            }
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx != 0 || dy != 0)
+                    {
+                        cell = ReturnCell(X + dx, Y + dy);
+                        if (cell != null)
+                        {
+                            cell.Recursed();
+                        }
+                    }
+                }
             }
         }
-        public void HaveItMineN()
+        internal bool GetMineN()
         {
             for (int dx = -1; dx <= 1; dx++)
             {
@@ -70,11 +75,31 @@ namespace MineSweeper2
                         cell = ReturnCell(X + dx, Y + dy);
                         if (cell!=null && cell.IsMine)
                         {
-                            HaveMineNeigh = true;
+                            return true;
                         }
                     }
                 }
             }
+            return false;
+        }
+        int MineCount()
+        {
+            int result = 0;
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx != 0 || dy != 0)
+                    {
+                        cell = ReturnCell(X + dx, Y + dy);
+                        if (cell != null && cell.IsMine)
+                        {
+                            result++;
+                        }
+                    }
+                }
+            }
+            return result;
         }
         Cell? ReturnCell(int x, int y)
         {
@@ -84,55 +109,26 @@ namespace MineSweeper2
             }
             return null;
         }
-        int NeighborMineCount()
-        {
-            int MineNAmmount = 0;
-            for(int dx = -1; dx <= 1; dx++)
-            {
-                for(int dy = -1; dy <= 1; dy++)
-                {
-                    if(dx != 0 || dy != 0)
-                    {
-                        ReturnCell(X + dx, Y + dy);
-                        if (cell != null && cell.IsMine)
-                        {
-                            MineNAmmount++;
-                        }
-                    }
-                }
-            }
-            //if (MineNAmmount != 0)
-            //{
-            //    HaveMineNeigh = true;
-            //}
-            return MineNAmmount;
-        }
-        public void Render()
+        internal void Render()
         {
             Console.SetCursorPosition(X, Y);
-            if (IsOpen)
-            {
-                if (IsMine)
-                {
-                    Console.Write('#');
-                }
-                else
-                {
-                int N = NeighborMineCount();
-                    if (N == 0)
-                    {
-                        Console.Write(' ');
-                    }
-                    else
-                    {
-                        Console.Write(N);
-                    }
-                }
-            }
-            else
+            if (!IsOpen)
             {
                 Console.Write('\u2588');
+                return;
             }
+            if (IsMine)
+            {
+                Console.Write('#');
+                return;
+            }
+            int mineCount = MineCount();
+            if (mineCount > 0)
+            {
+                Console.Write(mineCount);
+                return;
+            }
+            Console.Write(' ');
         }
     }
 }
