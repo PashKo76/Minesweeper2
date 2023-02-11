@@ -15,13 +15,13 @@ namespace MineSweeper2
         Cell? cell;
         public bool IsMine { get; private set; }
         public bool IsOpen { get; set; }
-        public Cell(in Field field, int x, int y)
+        public Cell(in Field field, int x, int y, bool IsMine)
         {
             IsOpen = false;
             this.field = field;
             X = x;
             Y = y;
-            IsMine = random.Next(1, 10) == 1;
+            this.IsMine = IsMine;
         }
         internal void Recursed()
         {
@@ -30,33 +30,22 @@ namespace MineSweeper2
                 return;
             }
             IsOpen = true;
-            Render(); // почему? Сделаю рендер "Динамическим", один раз отрисуб поле в начале, а потом буду перекрашивать клетки
-            if (GetMineN())
-            {
-                for (int dx = -1; dx <= 1; dx++)
-                {
-                    for (int dy = -1; dy <= 1; dy++)
-                    {
-                        if (dx != 0 || dy != 0)
-                        {
-                            cell = ReturnCell(X + dx, Y + dy);
-                            if (cell != null && !cell.IsMine && !cell.GetMineN())
-                            {
-                                cell.Recursed();
-                            }
-                        }
-                    }
-                }
-                return;
-            }
+            bool HaveMineNeigh = GetMineN(); //я вспомнил почему эта проверка в начале, сапер саперем но производительность;
             for (int dx = -1; dx <= 1; dx++)
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (dx != 0 || dy != 0)
+                    cell = ReturnCell(X + dx, Y + dy);
+                    if (cell != null && (dx != 0 || dy != 0))
                     {
-                        cell = ReturnCell(X + dx, Y + dy);
-                        if (cell != null)
+                        if (HaveMineNeigh)
+                        {
+                            if (!cell.IsMine && !cell.GetMineN())
+                            {
+                                cell.Recursed();
+                            }
+                        }
+                        else
                         {
                             cell.Recursed();
                         }
@@ -66,20 +55,7 @@ namespace MineSweeper2
         }
         internal bool GetMineN()
         {
-            for (int dx = -1; dx <= 1; dx++)
-            {
-                for (int dy = -1; dy <= 1; dy++)
-                {
-                    if (dx != 0 || dy != 0)
-                    {
-                        cell = ReturnCell(X + dx, Y + dy);
-                        if (cell!=null && cell.IsMine)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
+            if (MineCount() > 0) return true;
             return false;
         }
         int MineCount()

@@ -11,6 +11,7 @@ namespace MineSweeper2
         int Width;
         int Height;
         Cell[,] cells;
+        Random random = new Random(1);
         public Field(int Width, int Height)
         {
             this.Width = Width;
@@ -24,7 +25,7 @@ namespace MineSweeper2
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    cells[x, y] = new Cell(this, x, y);
+                    cells[x, y] = new Cell(this, x, y, random.Next(0,9) == 0);
                 }
             }
         }
