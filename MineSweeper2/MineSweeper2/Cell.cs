@@ -8,7 +8,6 @@ namespace MineSweeper2
 {
     internal class Cell
     {
-        Random random = new Random();
         int X;
         int Y;
         Field field;
@@ -30,7 +29,7 @@ namespace MineSweeper2
                 return;
             }
             IsOpen = true;
-            bool HaveMineNeigh = GetMineN(); //я вспомнил почему эта проверка в начале, сапер саперем но производительность;
+            bool HaveMineNeigh = GetMineN();
             for (int dx = -1; dx <= 1; dx++)
             {
                 for (int dy = -1; dy <= 1; dy++)
@@ -38,14 +37,7 @@ namespace MineSweeper2
                     cell = ReturnCell(X + dx, Y + dy);
                     if (cell != null && (dx != 0 || dy != 0))
                     {
-                        if (HaveMineNeigh)
-                        {
-                            if (!cell.IsMine && !cell.GetMineN())
-                            {
-                                cell.Recursed();
-                            }
-                        }
-                        else
+                        if (!HaveMineNeigh || (!cell.IsMine && !cell.GetMineN()))
                         {
                             cell.Recursed();
                         }
