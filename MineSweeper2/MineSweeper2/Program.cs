@@ -6,14 +6,15 @@
         {
             Console.SetBufferSize(32, 16);
             Console.SetWindowSize(32, 16);
-            Field field = new Field(10, 10);
+            Field field = new Field(10, 10, 1);
             Console.WriteLine("Нажмите Любую Клавишу");
             if(Console.ReadKey().Key == ConsoleKey.Spacebar)
             {
                 field.Debug();
             }
             (int X, int Y) IntInput;
-            while (true)
+            int Count = 0;
+            while (field.WinCellAmount > field.HowMuchCellIsOpen && !field.DidILose)
             {
                 Console.Clear();
                 field.Render();
@@ -35,9 +36,21 @@
                     continue;
                 }
                 field.OpenCell(IntInput.X, IntInput.Y);
+                Count++;
             }
-            //Какая нибудь логика для вывода результата
-            Console.ReadKey();
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+            if (field.DidILose)
+            {
+                Console.WriteLine("Вы проиграли!");
+            }
+            else
+            {
+                Console.WriteLine("Мои поздравления!");
+                Console.WriteLine($"Вы виграли за {Count} ходов!");
+            }
+            Console.WriteLine("Игра Закончится за 2 секунды");
+            Thread.Sleep(2000);
         }
     }
 }

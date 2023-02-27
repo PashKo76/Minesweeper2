@@ -11,12 +11,17 @@ namespace MineSweeper2
         int Width;
         int Height;
         Cell[,] cells;
-        Random random = new Random(1);
-        public Field(int Width, int Height)
+        Random random;
+        internal int WinCellAmount { get; private set; }
+        internal int HowMuchCellIsOpen = 0;
+        internal bool DidILose = false;
+        public Field(int Width, int Height, int Seed)
         {
+            random = new Random(Seed);
             this.Width = Width;
             this.Height = Height;
             cells = new Cell[Width, Height];
+            WinCellAmount = Width * Height;
             Build();
         }
         void Build()
@@ -25,7 +30,15 @@ namespace MineSweeper2
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    cells[x, y] = new Cell(this, x, y, random.Next(0,9) == 0);
+                    if (random.Next(0, 9) == 0)
+                    {
+                        cells[x, y] = new Cell(this, x, y, true);
+                        WinCellAmount--;
+                    }
+                    else
+                    {
+                        cells[x, y] = new Cell(this, x, y, false);
+                    }
                 }
             }
         }
@@ -47,6 +60,11 @@ namespace MineSweeper2
             if(!DoesCordExist(X, Y))
             {
                 throw new Exception("Нормальные кординаты где?");
+            }
+            if (cells[X, Y].IsMine)
+            {
+                DidILose = true;
+                return;
             }
             cells[X, Y].Recursed();
         }

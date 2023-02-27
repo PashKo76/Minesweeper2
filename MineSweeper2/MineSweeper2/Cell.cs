@@ -28,6 +28,7 @@ namespace MineSweeper2
             {
                 return;
             }
+            field.HowMuchCellIsOpen++;
             IsOpen = true;
             bool HaveMineNeigh = GetMineN();
             for (int dx = -1; dx <= 1; dx++)
