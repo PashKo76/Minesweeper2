@@ -11,6 +11,7 @@ namespace MineSweeper2
         int Width;
         int Height;
         Cell[,] cells;
+        Random random = new Random(1);
         public Field(int Width, int Height)
         {
             this.Width = Width;
@@ -24,36 +25,51 @@ namespace MineSweeper2
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    cells[x, y] = new Cell(this, x, y);
+                    cells[x, y] = new Cell(this, x, y, random.Next(0,9) == 0);
                 }
             }
         }
-        public Cell GetCellInf(int x, int y)
+        public Cell? GetCellInf(int x, int y)
         {
-            return cells[x, y];
-        }
-        public void Render()
-        {
-            for (int y = 0; y < Height; y++)
+            if (DoesCordExist(x, y))
             {
-                for (int x = 0; x < Width; x++)
-                {
-                    cells[x, y].Render();
-                }
-                Console.WriteLine();
+                return cells[x, y];
             }
+            return null;
         }
         public bool DoesCordExist(int x, int y)
         {
-            bool bX;
-            bool bY;
-            if (x >= Width) bX = false;
-            else if (x < 0) bX = false;
-            else bX = true;
-            if (y >= Height) bY = false;
-            else if (y < 0) bY = false;
-            else bY = true;
-            return bX && bY;
+            if (x >= Width || x < 0 || y >= Height || y < 0) return false;
+            return true;
+        }
+        internal void OpenCell(int X, int Y)
+        {
+            if(!DoesCordExist(X, Y))
+            {
+                throw new Exception("Нормальные кординаты где?");
+            }
+            cells[X, Y].Recursed();
+        }
+        internal void Debug()
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    cells[x, y].IsOpen = true;
+                }
+            }
+            Render();
+        }
+        internal void Render()
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    cells[x, y].Render();
+                }
+            }
         }
     }
 }

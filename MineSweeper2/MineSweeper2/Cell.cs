@@ -8,64 +8,95 @@ namespace MineSweeper2
 {
     internal class Cell
     {
-        Random random = new Random();
         int X;
         int Y;
         Field field;
-        Cell cell;
-        public bool IsMine { get; }
+        Cell? cell;
+        public bool IsMine { get; private set; }
         public bool IsOpen { get; set; }
-        public bool HaveMineNeigh { get; set; }
-        public Cell(in Field field, int x, int y)
+        public Cell(in Field field, int x, int y, bool IsMine)
         {
+            IsOpen = false;
             this.field = field;
             X = x;
             Y = y;
-            IsMine = random.Next(1, 10) == 1;
+            this.IsMine = IsMine;
         }
-        int NeighborMineCount()
+        internal void Recursed()
         {
-            int MineNAmmount = 0;
-            for(int dx = -1; dx <= 1; dx++)
+            if (IsOpen)
             {
-                for(int dy = -1; dy <= 1; dy++)
+                return;
+            }
+            IsOpen = true;
+            bool HaveMineNeigh = GetMineN();
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
                 {
-                    if(dx != 0 || dy != 0)
+                    cell = ReturnCell(X + dx, Y + dy);
+                    if (cell != null && (dx != 0 || dy != 0))
                     {
-                        if (field.DoesCordExist(X + dx, Y + dy))
+                        if (!HaveMineNeigh || (!cell.IsMine && !cell.GetMineN()))
                         {
-                            cell = field.GetCellInf(X + dx, Y + dy);
-                            if (cell.IsMine)
-                            {
-                                MineNAmmount++;
-                            }
+                            cell.Recursed();
                         }
                     }
                 }
             }
-            if (MineNAmmount != 0)
-            {
-                HaveMineNeigh = true;
-            }
-            return MineNAmmount;
         }
-        public void Render()
+        internal bool GetMineN()
         {
+            if (MineCount() > 0) return true;
+            return false;
+        }
+        int MineCount()
+        {
+            int result = 0;
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx != 0 || dy != 0)
+                    {
+                        cell = ReturnCell(X + dx, Y + dy);
+                        if (cell != null && cell.IsMine)
+                        {
+                            result++;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        Cell? ReturnCell(int x, int y)
+        {
+            if (field.DoesCordExist(x, y))
+            {
+                return field.GetCellInf(x, y);
+            }
+            return null;
+        }
+        internal void Render()
+        {
+            Console.SetCursorPosition(X, Y);
+            if (!IsOpen)
+            {
+                Console.Write('\u2588');
+                return;
+            }
             if (IsMine)
             {
                 Console.Write('#');
+                return;
             }
-            else
+            int mineCount = MineCount();
+            if (mineCount > 0)
             {
-                if (NeighborMineCount() == 0)
-                {
-                    Console.Write(' ');
-                }
-                else
-                {
-                    Console.Write(NeighborMineCount());
-                }
+                Console.Write(mineCount);
+                return;
             }
+            Console.Write(' ');
         }
     }
 }
