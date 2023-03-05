@@ -1,5 +1,6 @@
 ﻿namespace MineSweeper2
 {
+    delegate void Walker(int X, int Y);
     internal class Program
     {
         static void Main(string[] args)

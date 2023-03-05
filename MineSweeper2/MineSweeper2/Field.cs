@@ -8,6 +8,7 @@ namespace MineSweeper2
 {
     internal class Field
     {
+
         int Width;
         int Height;
         Cell[,] cells;
@@ -26,21 +27,18 @@ namespace MineSweeper2
         }
         void Build()
         {
-            for (int x = 0; x < Width; x++)
+            Walk((x, y) =>
             {
-                for (int y = 0; y < Height; y++)
+                if (random.Next(0, 9) == 0)
                 {
-                    if (random.Next(0, 9) == 0)
-                    {
-                        cells[x, y] = new Cell(this, x, y, true);
-                        WinCellAmount--;
-                    }
-                    else
-                    {
-                        cells[x, y] = new Cell(this, x, y, false);
-                    }
+                    cells[x, y] = new Cell(this, x, y, true);
+                    WinCellAmount--;
                 }
-            }
+                else
+                {
+                    cells[x, y] = new Cell(this, x, y, false);
+                }
+            });
         }
         public Cell? GetCellInf(int x, int y)
         {
@@ -70,22 +68,20 @@ namespace MineSweeper2
         }
         internal void Debug()
         {
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    cells[x, y].IsOpen = true;
-                }
-            }
+            Walk((x, y) => cells[x, y].IsOpen = true);
             Render();
         }
         internal void Render()
+        {
+            Walk((x, y) => cells[x, y].Render());
+        }
+        void Walk(Walker walker)
         {
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    cells[x, y].Render();
+                    walker(x, y);
                 }
             }
         }
