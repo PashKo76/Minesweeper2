@@ -14,7 +14,7 @@
             }
             (int X, int Y) IntInput;
             int Count = 0;
-            while (field.WinCellAmount > field.HowMuchCellIsOpen && !field.DidILose)
+            while ((field.WinCellAmount > field.HowMuchCellIsOpen) && !field.DidILose)
             {
                 Console.Clear();
                 field.Render();
@@ -38,6 +38,7 @@
                 field.OpenCell(IntInput.X, IntInput.Y);
                 Count++;
             }
+            Thread.Sleep(1000);
             Console.Clear();
             Console.SetCursorPosition(0, 0);
             if (field.DidILose)
