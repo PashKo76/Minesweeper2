@@ -22,28 +22,36 @@ namespace MineSweeper2
             Y = y;
             this.IsMine = IsMine;
         }
+        void WalkArround(Walker walker)
+        {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    walker(dx, dy);
+                }
+            }
+        }
         internal void Recursed()
         {
             if (IsOpen)
             {
                 return;
             }
+            field.HowMuchCellIsOpen++;
             IsOpen = true;
             bool HaveMineNeigh = GetMineN();
-            for (int dx = -1; dx <= 1; dx++)
+            WalkArround((dx, dy) =>
             {
-                for (int dy = -1; dy <= 1; dy++)
+                cell = ReturnCell(X + dx, Y + dy);
+                if (cell != null && (dx != 0 || dy != 0))
                 {
-                    cell = ReturnCell(X + dx, Y + dy);
-                    if (cell != null && (dx != 0 || dy != 0))
+                    if (!HaveMineNeigh || (!cell.IsMine && !cell.GetMineN()))
                     {
-                        if (!HaveMineNeigh || (!cell.IsMine && !cell.GetMineN()))
-                        {
-                            cell.Recursed();
-                        }
+                        cell.Recursed();
                     }
                 }
-            }
+            });
         }
         internal bool GetMineN()
         {
@@ -53,20 +61,17 @@ namespace MineSweeper2
         int MineCount()
         {
             int result = 0;
-            for (int dx = -1; dx <= 1; dx++)
+            WalkArround((dx, dy) =>
             {
-                for (int dy = -1; dy <= 1; dy++)
+                if (dx != 0 || dy != 0)
                 {
-                    if (dx != 0 || dy != 0)
+                    cell = ReturnCell(X + dx, Y + dy);
+                    if (cell != null && cell.IsMine)
                     {
-                        cell = ReturnCell(X + dx, Y + dy);
-                        if (cell != null && cell.IsMine)
-                        {
-                            result++;
-                        }
+                        result++;
                     }
                 }
-            }
+            });
             return result;
         }
         Cell? ReturnCell(int x, int y)
