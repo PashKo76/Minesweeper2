@@ -16,9 +16,18 @@ namespace MineSweeper2
         internal int WinCellAmount { get; private set; }
         internal int HowMuchCellIsOpen = 0;
         internal bool DidILose = false;
+        public Field(int Width, int Height)
+        {
+            random = new Random();
+            Initialization(Width, Height);
+        }
         public Field(int Width, int Height, int Seed)
         {
             random = new Random(Seed);
+            Initialization(Width, Height);
+        }
+        void Initialization(int Width, int Height)
+        {
             this.Width = Width;
             this.Height = Height;
             cells = new Cell[Width, Height];
@@ -74,6 +83,16 @@ namespace MineSweeper2
         internal void Render()
         {
             Walk((x, y) => cells[x, y].Render());
+            for(int x = 0; x < Width; x++)
+            {
+                Console.SetCursorPosition(x, Height);
+                Console.Write(x);
+            }
+            for(int y = 0; y < Height; y++)
+            {
+                Console.SetCursorPosition(Width, y);
+                Console.Write(y);
+            }
         }
         void Walk(Walker walker)
         {
