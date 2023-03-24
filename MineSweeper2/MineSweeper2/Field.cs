@@ -21,11 +21,6 @@ namespace MineSweeper2
             random = new Random();
             Initialization(Width, Height);
         }
-        public Field(int Width, int Height, int Seed)
-        {
-            random = new Random(Seed);
-            Initialization(Width, Height);
-        }
         void Initialization(int Width, int Height)
         {
             this.Width = Width;
@@ -70,15 +65,11 @@ namespace MineSweeper2
             }
             if (cells[X, Y].IsMine)
             {
+                cells[X, Y].IsOpen = true;
                 DidILose = true;
                 return;
             }
             cells[X, Y].Recursed();
-        }
-        internal void Debug()
-        {
-            Walk((x, y) => cells[x, y].IsOpen = true);
-            Render();
         }
         internal void Render()
         {

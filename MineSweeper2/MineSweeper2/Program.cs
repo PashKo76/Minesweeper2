@@ -7,12 +7,7 @@
         {
             Console.SetWindowSize(32, 16);
             Console.SetBufferSize(32, 16);
-            Field field = new Field(10, 10, 1);
-            Console.WriteLine("Нажмите Любую Клавишу");
-            if(Console.ReadKey().Key == ConsoleKey.Spacebar)
-            {
-                field.Debug();
-            }
+            Field field = new Field(10, 10);
             (int X, int Y) IntInput;
             int Count = 0;
             while ((field.WinCellAmount > field.HowMuchCellIsOpen) && !field.DidILose)
@@ -20,7 +15,7 @@
                 Console.Clear();
                 field.Render();
                 Console.SetCursorPosition(0, 12);
-                Console.WriteLine("Введите (X, Y, Open)");
+                Console.WriteLine("Enter Cordinate (X, Y, Open)");
                 string? Input = Console.ReadLine();
                 try
                 {
@@ -28,7 +23,7 @@
                 }
                 catch
                 {
-                    Console.WriteLine("А нормально не мог ввести?");
+                    Console.WriteLine("Error, try again!");
                     Thread.Sleep(1000);
                     continue;
                 }
@@ -39,19 +34,20 @@
                 field.OpenCell(IntInput.X, IntInput.Y);
                 Count++;
             }
+            field.Render();
             Thread.Sleep(1000);
             Console.Clear();
             Console.SetCursorPosition(0, 0);
             if (field.DidILose)
             {
-                Console.WriteLine("Вы проиграли!");
+                Console.WriteLine("You Lose!");
             }
             else
             {
-                Console.WriteLine("Мои поздравления!");
-                Console.WriteLine($"Вы виграли за {Count} ходов!");
+                Console.WriteLine("Congratulation!");
+                Console.WriteLine($"you won in {Count} moves!");
             }
-            Console.WriteLine("Игра Закончится за 2 секунды");
+            Console.WriteLine("the game will end in 2 seconds");
             Thread.Sleep(2000);
         }
     }
