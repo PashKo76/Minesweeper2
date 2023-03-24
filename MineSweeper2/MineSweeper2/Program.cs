@@ -5,8 +5,8 @@
     {
         static void Main(string[] args)
         {
-            Console.SetBufferSize(32, 16);
             Console.SetWindowSize(32, 16);
+            Console.SetBufferSize(32, 16);
             Field field = new Field(10, 10, 1);
             Console.WriteLine("Нажмите Любую Клавишу");
             if(Console.ReadKey().Key == ConsoleKey.Spacebar)
